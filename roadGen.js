@@ -67,7 +67,7 @@ class Road {
 
             var side = Math.floor(Math.random() * 2);//'Port' side is 0, 'Starboard' is 1
             console.log('side:' + side);
-            var toEdge = -1;
+            var toEdge = -1;//All tbis is broken somehow
             var farPoint = new Point(seg.center.x, seg.center.y);
             while (((farPoint.x < 400) && (farPoint.x > 0)) && ((farPoint.y < 400) && (farPoint.y > 0))){
                 toEdge++;
