@@ -2,7 +2,6 @@
 TODO:
         4-way intersections
         intersection fill adjacent segments
-        fix min angle
         find second intersection of new road
         whole num of segments on road
  */
@@ -49,15 +48,15 @@ class Road {
     //end;
     //slope;
     //length;
-    constructor(){//TODO implement this as a factory
+    constructor(map){//TODO implement this as a factory
         this.segments = [];
-        if(allSegments.length === 0){
+        if(allSegments.length === 0){//TODO make this road more in the middle
             this.start = new Point(Math.floor(Math.random() * mapSize), Math.floor(Math.random() * mapSize));
             do{
                 this.end = new Point(Math.floor(Math.random() * mapSize), Math.floor(Math.random() * mapSize));
             }while(Point.distance(this.start, this.end) < minDist);
         }
-        else {
+        else {//TODO redo new roads until most segments are not over current segmets
             do {
                 var seg = allSegments[Math.floor(Math.random() * allSegments.length)];
             }while(seg.left.content != undefined && seg.right.content != undefined)
@@ -67,23 +66,41 @@ class Road {
 
             var side = Math.floor(Math.random() * 2);//'Port' side is 0, 'Starboard' is 1
             console.log('side:' + side);
-            var toEdge = -1;//All tbis is broken somehow
+            var toEdge = -1;
             var farPoint = new Point(seg.center.x, seg.center.y);
-            while (((farPoint.x < 400) && (farPoint.x > 0)) && ((farPoint.y < 400) && (farPoint.y > 0))){
+            while (((farPoint.x < mapSize) && (farPoint.x > 0)) && ((farPoint.y < mapSize) && (farPoint.y > 0))){
+                //map.fillRect(farPoint.x-2, farPoint.y-2, 5, 5);
+                //console.log('far.x: ' + farPoint.x);
+                //console.log('far.y: ' + farPoint.y);
+
                 toEdge++;
-                farPoint.x += parent.segmentHeight;
-                farPoint.y -= parent.segmentWidth;
+                if(side ===1) {
+                    farPoint.x += parent.segmentHeight;
+                    farPoint.y -= parent.segmentWidth;
+                }
+                else{
+                    farPoint.x -= parent.segmentHeight;
+                    farPoint.y += parent.segmentWidth;
+                }
             }
 
             console.log('toEdge: ' + toEdge);
-            var dist = segmentDensity * (Math.floor(Math.random() * (toEdge - 2)) + 3);//TODO make 2 some exp
+            var dist = segmentDensity * (Math.floor(Math.random() * (toEdge - 2)) + 3) + 1;//TODO make 2 some exp
             console.log('dist: ' + dist);
             var angle = Math.floor(Math.random() * (180 - 2 * minAngle)) + minAngle;
             var absAngle = (parent.angle - (180 - angle)) * Math.PI / 180;
             var xDist = dist*Math.cos(absAngle);
             var yDist = dist*Math.sin(absAngle);
+            if(parent.start.x > parent.end.x){
+                yDist *= -1;
+            }
             this.start = new Point(seg.center.x, seg.center.y);
-            this.end = new Point(seg.center.x - xDist, seg.center.y + yDist);
+            if(side ===1) {
+                this.end = new Point(seg.center.x + xDist, seg.center.y - yDist);
+            }
+            else{
+                this.end = new Point(seg.center.x - xDist, seg.center.y + yDist);
+            }
         }
         this.slope = (this.end.y - this.start.y) / (this.end.y - this.start.x);
         this.length = Point.distance(this.end, this.start);
