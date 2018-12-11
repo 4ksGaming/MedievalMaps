@@ -1,0 +1,3 @@
+Healer
+Scholar
+Adventurer

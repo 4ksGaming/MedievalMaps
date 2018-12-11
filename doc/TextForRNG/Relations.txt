@@ -1,0 +1,6 @@
+Friend
+Parent
+Child
+Sibling
+Cousin
+Significant Other

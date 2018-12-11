@@ -1,0 +1,4 @@
+Butcher
+Farmer
+Adventurer
+Hunter
