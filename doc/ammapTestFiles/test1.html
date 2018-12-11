@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title></title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <script
+    type="text/javascript"
+    src="/js/lib/dummy.js"
+    
+  ></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+
+  <style type="text/css">
+    body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+#chartdiv {
+  width: 100%;
+  height: 500px;
+}
+  </style>
+  <!-- TODO: Missing CoffeeScript 2 -->
+
+  <script type="text/javascript">
+
+
+    window.onload=function(){
+      
+/**
+ * ---------------------------------------
+ * This demo was created using amCharts 4.
+ *
+ * For more information visit:
+ * https://www.amcharts.com/
+ *
+ * Documentation is available at:
+ * https://www.amcharts.com/docs/v4/
+ * ---------------------------------------
+ */
+
+// Create map instance
+var chart = am4core.create("chartdiv", am4maps.MapChart);
+
+// Add line series
+var lineSeries = chart.series.push(new am4maps.MapLineSeries());	//"MapLineSeries" can be replaced with "MapSplineSeries" for smoothened lines
+
+/*
+var lat1 = pointToGeo(10);
+var long1 = pointToGeo(100);
+var lat2 = pointToGeo(20);
+var long2 = pointToGeo(50);
+*/
+
+
+lineSeries.data = [{
+  "multiGeoLine": [
+    [
+      { "latitude": 48.856614, "longitude": 2.352222 },
+      { "latitude": 40.712775, "longitude": -74.005973 },
+      //{ "latitude": 45, "longitude": -90},
+      { "latitude": 49.282729, "longitude": -123.120738 }
+    ]
+  ]
+  },{
+  "multiGeoLine": [
+    [
+      { "latitude": 37.464, "longitude": -69.123 },
+      { "latitude": 37.464, "longitude": -43.86 },
+      { "latitude": 21.759325, "longitude": -43.86 }
+    ]
+  ]
+	},{
+  "multiGeoLine": [
+    [
+      { "latitude": 0.464, "longitude": -69.123 },
+      { "latitude": 0.464, "longitude": -43.86 },
+      { "latitude": -80.759325, "longitude": -43.86 }
+    ]
+  ]
+	},{
+  "multiGeoLine": [
+    [
+      { "latitude": 1, "longitude": 1 },
+      { "latitude": -1, "longitude": 1 },
+      { "latitude": -1, "longitude": -1 },
+      { "latitude": 1, "longitude": -1}
+    ]
+  ]
+	},{
+  "multiGeoLine": [
+    [
+      { "latitude": 89, "longitude": 178 },
+      { "latitude": -89, "longitude": 178 },
+      { "latitude": -89, "longitude": -178 },
+      { "latitude": 89, "longitude": -178 },
+      { "latitude": 89, "longitude": 178 }
+    ]
+  ]
+	}/* ,{
+  "multiGeoLine": [
+  	[
+    	{ "latitude": lat1, "longitude": long1 },
+      { "latitude": lat2, "longitude": long2 }
+    ]
+  ]
+  }*/];
+
+lineSeries.mapLines.template.shortestDistance = false;		//forces straight lines
+//if set to true, lines will be drawn in the shortest distance following the curvature of the planet. Either setting does not effect splines.
+
+// Create image series
+var imageSeries = chart.series.push(new am4maps.MapImageSeries());
+
+// Create a circle image in image series template so it gets replicated to all new images
+var imageSeriesTemplate = imageSeries.mapImages.template;
+var circle = imageSeriesTemplate.createChild(am4core.Circle);
+circle.radius = 4;
+circle.fill = am4core.color("#B27799");
+circle.stroke = am4core.color("#FFFFFF");
+circle.strokeWidth = 2;
+circle.nonScaling = true;
+circle.tooltipText = "{title}";
+
+// Set property fields
+imageSeriesTemplate.propertyFields.latitude = "latitude";
+imageSeriesTemplate.propertyFields.longitude = "longitude";
+
+// Add data for the three cities
+imageSeries.data = [{
+  "latitude": 48.856614,
+  "longitude": 2.352222,
+  "title": "Paris"
+}, {
+  "latitude": 40.712775,
+  "longitude": -74.005973,
+  "title": "New York"
+}, {
+  "latitude": 49.282729,		//49.282729
+  "longitude": -123.120738,
+  "title": "Vancouver"
+}, {
+	"latitude": 37.464,
+  "longitude": -69.123,
+  "title": "test_1"
+  }, {
+  "latitude": 37.464,
+  "longitude": -43.86,
+  "title": "test_2"
+  }, {
+  "latitude": 21.759325,
+  "longitude": -43.86,
+  "title": "test_3"
+	}];
+
+
+
+
+
+    }
+
+</script>
+
+</head>
+<body>
+  <script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/maps.js"></script>
+<script src="https://www.amcharts.com/lib/4/geodata/worldLow.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<div id="chartdiv"></div>
+  
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "zo4xk0bv"
+      }], "*")
+    }
+  </script>
+</body>
+</html>
