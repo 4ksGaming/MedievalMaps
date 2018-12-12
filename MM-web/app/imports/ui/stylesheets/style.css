@@ -1,3 +1,67 @@
-body {
-  padding-top: 61px;  /* Move body of page below navbar. */
+#home {
+/*  padding-top: 61px;  !* Move body of page below navbar. *!
+  background: url('/images/IgaveUp.png') no-repeat;
+  !*background-attachment: local;*!
+  !*background-position: center;*!
+  background-size: 100%;*/
 }
+.img{
+  /*background-color: transparent !important;*/
+}
+footer{
+  /*width: 100%;*/
+ /* background-image: url('/images/footer.png');
+  background-size: auto auto;*/
+  margin: -500px;
+}
+#homebut {
+  width: 70%;
+}
+#createMap {
+float: left;
+}
+#brush {
+  float: left;
+}
+#wrapper {
+  margin: -136% auto auto;
+  position: absolute;
+  width: 100%;
+  align-content: center;
+}
+#wrapper2{
+  margin: -197% auto auto;
+  position: absolute;
+  width: 100%;
+  align-content: center;
+  left: 11%;
+}
+#generate {
+  padding-top: 61px;  /* Move body of page below navbar. */
+  background: url('/images/blankCreate.png') no-repeat;
+  /*background-attachment: local;*/
+  /*background-position: center;*/
+  background-size: 100%;
+}
+img.bg {
+  /* Set rules to fill background */
+  min-height: 100%;
+  min-width: 1920px;
+
+  /* Set up proportionate scaling */
+  width: 100%;
+  height: auto;
+
+  /* Set up positioning */
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+@media screen and (max-width: 1920px) { /* Specific to this particular image */
+  img.bg {
+    left: 50%;
+    margin-left: -512px;   /* 50% */
+  }
+}
+

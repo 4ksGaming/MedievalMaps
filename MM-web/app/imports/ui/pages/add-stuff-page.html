@@ -1,12 +1,13 @@
 <template name="Add_Stuff_Page">
-  {{#If_Logged_In}}
-    <div style="padding-top: 20px" class="ui text container">
-      {{> quickForm
-      collection=stuffCollection
-      template="semanticUI"
-      id="AddStuffForm"
-      type="insert"
-      resetOnSuccess=true}}
+  <img class="img.bg" src="/images/Webpage2.png" width="100%"/>
+  <!--<body id="home">-->
+  <div id="wrapper2">
+    <div class="ui container">
+      <a class="{{ isActiveRoute 'Home_Page'}} item" href="{{pathFor 'Home_Page'}}">
+        <img class="img" src="/images/MMLogo.png"  id="homebut"/>
+      </a>
     </div>
-  {{/If_Logged_In}}
+  </div>
+
+
 </template>
