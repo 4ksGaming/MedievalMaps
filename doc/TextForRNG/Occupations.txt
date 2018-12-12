@@ -1,0 +1,24 @@
+Blacksmith
+Guard
+Scholar
+Hunter
+Butcher
+Baker
+Farmer
+Clergy
+Shopkeep
+Tailor 
+Prostitute
+Barkeep
+Adventurer
+Unemployed
+Sales Person
+Librarian
+Healer
+Mayor
+Stable Master
+Carriage Driver
+Banker
+Jewler
+Youth
+Teacher
