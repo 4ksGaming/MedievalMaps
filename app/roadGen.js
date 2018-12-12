@@ -10,8 +10,11 @@ var minDist = 100;
 var segmentDensity = 40;
 var minAngle = 90;
 var overlapMax = 1/3;
-var allSegments = new Array();
+var mouseOverRadius = 10;
+var buildingChance = 1;
 var allRoads = new Array();
+var allSegments = new Array();
+var allBuildings = new Array();
 $( document ).ready(function() {
     var c = document.getElementById("map");
     var map = c.getContext("2d");
@@ -19,27 +22,71 @@ $( document ).ready(function() {
     allSegments = [];
     allRoads =[];
 
-    var firstX = Math.floor(Math.random() * mapSize);
-    var firstY = Math.floor(Math.random() * mapSize);
-    var secondX = Math.floor(Math.random() * (mapSize - (minDist * 2)));
-    var secondY = Math.floor(Math.random() * (mapSize - (minDist * 2)));
-    //Handle going off edge? Is it necessary? I think the answer is no
-    if(secondX > (firstX - minDist)){
-        secondX+=100;
-    }
-    if(secondY > (firstY - minDist)){
-        secondY+=100;
-    }
 
     for(var i = 0; i < roadNum; i++) {
         console.log('Road  ' + i);
         var road = new Road();
         allRoads.push(road);
     }
-    for(var i = 0; i < roadNum; i++) {
-        allRoads[i].draw(map);
+    for(var i = 0; i < allSegments.length; i++){
+       if(Math.random() <= buildingChance ) {
+           allSegments[i].content = new Building();
+           allBuildings.push(allSegments[i]);
+       }
     }
-    map.stroke();
+    //for(var i = 0; i < roadNum; i++) {
+    //    allRoads[i].draw(map);
+    //}
+    //map.stroke();
+
+    function reOffset(){
+        var BB=c.getBoundingClientRect();
+        offsetX=BB.left;
+        offsetY=BB.top;
+    }
+    var offsetX,offsetY;
+    reOffset();
+    window.onscroll=function(e){ reOffset(); }
+    window.onresize=function(e){ reOffset(); }
+
+    draw();
+
+    $("#map").mousemove(function(e){handleMouseMove(e);});
+
+    function draw(){
+        map.fillStyle = "#000000";
+        for(var i = 0; i < roadNum; i++) {
+            allRoads[i].draw(map);
+        }
+        map.stroke();
+    }
+    function handleMouseMove(e){
+        // tell the browser we're handling this event
+        e.preventDefault();
+        e.stopPropagation();
+
+        mouseX=parseInt(e.clientX-offsetX);
+        mouseY=parseInt(e.clientY-offsetY);
+
+        map.clearRect(0,0,mapSize,mapSize);
+        draw();
+        for(var i=0;i<allSegments.length;i++){
+            var h=allSegments[i];
+            var dx=mouseX-h.center.x;
+            var dy=mouseY-h.center.y;
+            if(dx*dx+dy*dy<mouseOverRadius*mouseOverRadius){
+                map.font = "12px Arial";
+                map.fillStyle = "#FF0000";
+                map.fillRect(h.center.x - 7, h.center.y - 7, 156, 106);
+                map.fillStyle = "#FFFFFF";
+                map.fillRect(h.center.x - 4, h.center.y - 4, 150, 100);
+                map.fillStyle = "#000000";
+                map.fillText(h.content.label,h.center.x+11,h.center.y+11);
+                break;
+            }
+        }
+
+    }
 });
 
 
@@ -141,10 +188,6 @@ class Road {
             allSegments.push(this.segments[i]);
         }
     }
-    draw(map){
-
-
-    }
     pushSegmentsToAll(){
         for (var i = 0; i < this.segmentCount; i++){
             allSegments.push(this.segments[i]);
@@ -213,9 +256,9 @@ class Spot {
 
 }
 class Building {
-    //size;
-    //angle;
-    //picute/shape?
+    constructor() {
+        this.label = '#' + allBuildings.length;
+    }
 }
 class Intersection{
     //spot;
