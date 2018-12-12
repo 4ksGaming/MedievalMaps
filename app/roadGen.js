@@ -4,40 +4,59 @@ TODO:
         intersection fill adjacent segments
         whole num of segments on seed road
  */
-var mapSize = 900;
-var roadNum = 100;
-var minDist = 100;
-var segmentDensity = 40;
-var minAngle = 90;
-var overlapMax = 1/3;
-var mouseOverRadius = 10;
-var buildingChance = 1;
+//Variables used throughout, some to be used in sliders
+var mapSize = 900;//Size of canvas map is being drawn in
+var roadNum = 15;//Number of roads to generate TODO: Make this minRoads and MaxRoads
+var minDist = 100;//Minimum length of a road
+var segmentDensity = 40;//Distance between segments on a road
+var minAngle = 90;//minimum angle of intersection between two roads
+var overlapMax = 1/3;//Proportion of segments of new roads that are not intersections for it to be a valid new road
+var mouseOverRadius = 10;//Mouse Over Radius of building tooltips
+var buildingChance = 1;//Chance that there is a building on any given segments
+var houseChance = 0.25;//Additional chance that a building will be a house. Setting to 0 means houses are as likely as any other building type
+
 var allRoads = new Array();
 var allSegments = new Array();
 var allBuildings = new Array();
-$( document ).ready(function() {
+var buildingTypes = [
+    'Butcher Shop',
+    'Barracks',
+    'Church',
+    'Tavern',
+    'Brothel',
+    'Family House',
+    'Blacksmith',
+    'Town Hall',
+    'Bank',
+    'Bakery',
+    'Jewelry Store',
+    'Stables',
+    'Apothecary',
+    'Orphanage',
+    'Schoolhouse',
+    'House',
+];
+$( document ).ready(function() {//Dont begin until html document is loaded
     var c = document.getElementById("map");
     var map = c.getContext("2d");
     map.clearRect(0,0,mapSize,mapSize);
-    allSegments = [];
-    allRoads =[];
+
+    allSegments = [];//Clear arrays of objects
+    allRoads = [];
+    allBuildings = [];
 
 
-    for(var i = 0; i < roadNum; i++) {
-        console.log('Road  ' + i);
+    for(var i = 0; i < roadNum; i++) {//Generates all the roads
         var road = new Road();
         allRoads.push(road);
     }
-    for(var i = 0; i < allSegments.length; i++){
+
+    for(var i = 0; i < allSegments.length; i++){//Generates Buildings for each spot for them
        if(Math.random() <= buildingChance ) {
            allSegments[i].content = new Building();
            allBuildings.push(allSegments[i]);
        }
     }
-    //for(var i = 0; i < roadNum; i++) {
-    //    allRoads[i].draw(map);
-    //}
-    //map.stroke();
 
     function reOffset(){
         var BB=c.getBoundingClientRect();
@@ -77,9 +96,9 @@ $( document ).ready(function() {
             if(dx*dx+dy*dy<mouseOverRadius*mouseOverRadius){
                 map.font = "12px Arial";
                 map.fillStyle = "#FF0000";
-                map.fillRect(h.center.x - 7, h.center.y - 7, 156, 106);
+                map.fillRect(h.center.x - 7, h.center.y - 7, 66, 24);
                 map.fillStyle = "#FFFFFF";
-                map.fillRect(h.center.x - 4, h.center.y - 4, 150, 100);
+                map.fillRect(h.center.x - 4, h.center.y - 4, 60, 18);
                 map.fillStyle = "#000000";
                 map.fillText(h.content.label,h.center.x+11,h.center.y+11);
                 break;
@@ -92,30 +111,34 @@ $( document ).ready(function() {
 
 class Road {
     constructor(){//TODO implement this as a factory
-        this.segments = [];
+
+        //Generates road from two random points if first road
         if(allSegments.length === 0){//TODO make this road more in the middle
             this.start = new Point(Math.floor(Math.random() * mapSize), Math.floor(Math.random() * mapSize));
-            do{
+
+            do{//Ensures road meets the minimum length
                 this.end = new Point(Math.floor(Math.random() * mapSize), Math.floor(Math.random() * mapSize));
             }while(Point.distance(this.start, this.end) < minDist);
+
             this.length = Point.distance(this.end, this.start);
             this.angle = Math.asin((this.start.y - this.end.y)/this.length) * 180 / Math.PI;
             this.generateSegments();
         }
-        else {//TODO redo new roads until most segments are not over current segments
-            do {
-                do {
+        //Generates road from an intersection with existing road
+        else {
+            do {//All of this is redone until enough of the road isn't overtop existing road
+
+                do {//Find a road segment that does not already have an intersection
                     var seg = allSegments[Math.floor(Math.random() * allSegments.length)];
                 } while (!seg.left.isOpen && !seg.right.isOpen)
-                seg.right.content = new Intersection();
-                seg.left.content = new Intersection();
-                var parent = seg.road;
 
-                var side = Math.floor(Math.random() * 2);//'Port' side is 0, 'Starboard' is 1
-                var toEdge = -1;
+                var parent = seg.road;//The old road that the new road will come off of
+
+                var side = Math.floor(Math.random() * 2);//Picks a random side of old road to put new road on
+
+                var toEdge = -1;//Distance from new intersection to edge of the map in approximately direction new road will go
                 var farPoint = new Point(seg.center.x, seg.center.y);
                 while (((farPoint.x < mapSize) && (farPoint.x > 0)) && ((farPoint.y < mapSize) && (farPoint.y > 0))) {
-
                     toEdge++;
                     if (side === 1) {
                         farPoint.x += parent.segmentHeight;
@@ -126,59 +149,88 @@ class Road {
                     }
                 }
 
-                var dist = segmentDensity * (Math.floor(Math.random() * (toEdge - 2)) + 3) + 1;//TODO make 2 some exp
+                //Determines length of new road
+                // -2 and +3 to make road longer than minimum length, + 1 to make road evenly divide into segments
+                var dist = segmentDensity * (Math.floor(Math.random() * (toEdge - 2)) + 3) + 1;
+
+                //Angle between old and new road in degrees
                 var angle = Math.floor(Math.random() * (180 - 2 * minAngle)) + minAngle;
+
+                //Absolute angle of new road in rads
                 var absAngle = (parent.angle - (180 - angle)) * Math.PI / 180;
+
+                //Breaks distance into x and y components to actually find coordinites of end of road
                 var xDist = dist * Math.cos(absAngle);
                 var yDist = dist * Math.sin(absAngle);
+
+                //Not entirely sure why it needs this, but new road is reflected vertically sometimes without this
                 if (parent.start.x > parent.end.x) {
                     yDist *= -1;
                 }
+
                 this.start = new Point(seg.center.x, seg.center.y);
+
                 if (side === 1) {
                     this.end = new Point(seg.center.x + xDist, seg.center.y - yDist);
                 } else {
                     this.end = new Point(seg.center.x - xDist, seg.center.y + yDist);
                 }
+
                 this.length = Point.distance(this.end, this.start);
                 this.angle = Math.asin((this.start.y - this.end.y)/this.length) * 180 / Math.PI;
-            }while(!this.generateSegments())
+            }while(!this.generateSegments())//Redos all this until a sufficent number of new segments are not intersections
         }
-        this.slope = (this.end.y - this.start.y) / (this.end.y - this.start.x);
+
         this.pushSegmentsToAll();
     }
+
+
     generateSegments(){
         this.segments = [];
+
+        //How many segment swill be generated on the new road
         this.segmentCount = this.length / segmentDensity;
+
+        //The horizontal and vertical distance between each segment
         this.segmentWidth = (this.start.x - this.end.x) / this.length * segmentDensity;
         this.segmentHeight = (this.start.y - this.end.y) / this.length * segmentDensity;
-        var overlap = 0;
+
+        var overlap = 0;//Counts of how many segments overlap old segments, used ot determine if road has enough new segments
         var nonOverlap = 0;
+
+        //Places all segments on the road
         for (var i = 0; i < this.segmentCount; i++){
             var segPoint = new Point(this.start.x - i * this.segmentWidth, this.start.y - i * this.segmentHeight);
             var newSeg = (new Segment(segPoint, this, i));
             this.segments.push(newSeg);
         }
+
+        //Check all new segments against all old segments to check if they are intersections
         var oldSegLen = allSegments.length;
         for (var i = 0; i < this.segmentCount; i++) {
             var newSeg = this.segments[i];
+
             for (var j = 0; j < oldSegLen; j++) {
                 var oldSeg = allSegments[j];
-                if (Point.distance(newSeg.center, oldSeg.center) < 5) {
+
+                //Consider points an intersection if they are too close together
+                if (Point.distance(newSeg.center, oldSeg.center) < 5) {//TODO change 5 to some var/expression of vars
                     overlap++;
-                    oldSeg.blockSides();
+                    oldSeg.blockSides();//Block both segments from being used in a new intersection
                     newSeg.blockSides();
                 }
-                else{
+                else{//This is fucked
                     nonOverlap++;
                 }
 
             }
         }
+        //Also somewhat fucked by extension
         if(overlap/nonOverlap > overlapMax){
            return false;
+        }else {
+            return true;
         }
-        return true;
 
 
     }
@@ -203,16 +255,20 @@ class Road {
 
     }
 }
+
 class Point {
+
     constructor(x, y){
         this.x = x;
         this.y = y;
     }
+
     static distance(point1, point2){
         var dist =  Math.sqrt(Math.pow(point2.y - point1.y, 2) + Math.pow(point2.x - point1.x, 2));
         return dist;
     }
 }
+
 class Segment {
     constructor(center, road, num){
         this.center = center;
@@ -221,46 +277,29 @@ class Segment {
         this.left = new Spot();
         this.right = new Spot();
     }
-    blockSides(allowBuild = false){
+
+    blockSides(){
         this.left.isOpen = false;
         this.right.isOpen = false;
-        if(allowBuild){
-            this.right.markFree = true;
-            this.left.markFree = true;
-        }
-    }
-    blockAdj(allowBuild = false){
-        if (this.number+1 < Math.floor(this.road.segmentCount - 1)){
-            this.road.segments[this.number+1].blockSides(allowBuild);
-        }
-        if (this.number > 0){ this.road.segments[this.number-1].blockSides(allowBuild);}
     }
 
     draw(map){
-        //if(this.left.isOpen) {
-        //    map.fillRect(this.center.x - 2, this.center.y - 2, 11, 9);
-        //}
-        //else{
-            map.fillRect(this.center.x - 2, this.center.y - 2, 5, 5);
-
-        //}
+        map.fillRect(this.center.x - 2, this.center.y - 2, 5, 5);
 
     }
 }
+
 class Spot {
-    //content;
     constructor() {
         this.isOpen = true;
-        this.markFree = false;
     }
-
 }
+
 class Building {
     constructor() {
-        this.label = '#' + allBuildings.length;
+        var i = Math.floor(Math.random() * buildingTypes.length / (1 - houseChance));
+        var j = Math.min(i, buildingTypes.length -1);
+        this.type = buildingTypes[j];
+        this.label = this.type;
     }
-}
-class Intersection{
-    //spot;
-    //angle;
 }
