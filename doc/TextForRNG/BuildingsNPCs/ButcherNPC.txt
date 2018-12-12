@@ -1,4 +1,4 @@
-Butcher
-Farmer
-Adventurer
-Hunter
+'Butcher',
+'Farmer',
+'Adventurer',
+'Hunter',

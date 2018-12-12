@@ -1,4 +1,4 @@
-Barkeep
-Adventurer
-Hunter
-Unemployed
+'Barkeep',
+'Adventurer',
+'Hunter',
+'Unemployed',

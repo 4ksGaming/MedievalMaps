@@ -1,16 +1,16 @@
-Butcher Shop
-Barracks
-Church
-Tavern
-Brothel
-House
-Family House
-Blacksmith
-Town Hall
-Bank
-Bakery
-Jewelry Store
-Stables
-Apothecary
-Orphanage
-Schoolhouse 
+'Butcher Shop',
+'Barracks',
+'Church',
+'Tavern',
+'Brothel',
+'House',
+'Family House',
+'Blacksmith',
+'Town Hall',
+'Bank',
+'Bakery',
+'Jewelry Store',
+'Stables',
+'Apothecary',
+'Orphanage',
+'Schoolhouse', 

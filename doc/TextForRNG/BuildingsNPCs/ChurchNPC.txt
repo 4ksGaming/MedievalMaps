@@ -1,4 +1,4 @@
-Clergy
-Unemployed
-Healer
-Scholar
+'Clergy',
+'Unemployed',
+'Healer',
+'Scholar',

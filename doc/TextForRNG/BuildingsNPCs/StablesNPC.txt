@@ -1,3 +1,3 @@
-Stable Master
-Carriage Driver
-Farmer
+'Stable Master',
+'Carriage Driver',
+'Farmer',
