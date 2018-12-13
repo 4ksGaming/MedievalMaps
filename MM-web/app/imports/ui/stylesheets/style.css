@@ -8,6 +8,11 @@
 .img{
   /*background-color: transparent !important;*/
 }
+#mapTool {
+  margin-top: -165%;
+  padding-left: 20%;
+  position: absolute;
+}
 footer{
   /*width: 100%;*/
  /* background-image: url('/images/footer.png');
