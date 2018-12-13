@@ -1,17 +1,16 @@
 /*
 TODO:
-        4-way intersections
-        intersection fill adjacent segments
-        whole num of segments on seed road
+    Abandoned buildings
+    Building quilty
  */
 //Variables used throughout, some to be used in sliders
-var mapSize = 900;//Size of canvas map is being drawn in
-var roadNum = 15;//Number of roads to generate TODO: Make this minRoads and MaxRoads
-var minDist = 100;//Minimum length of a road
-var segmentDensity = 40;//Distance between segments on a road
+var mapSize = 600;//Size of canvas map is being drawn in
+var roadNum = 30;//Number of roads to generate TODO: Make this minRoads and MaxRoads
+var minDist = 150;//Minimum length of a road
+var segmentDensity = 30;//Distance between segments on a road
 var minAngle = 90;//minimum angle of intersection between two roads
 var overlapMax = 1/3;//Proportion of segments of new roads that are not intersections for it to be a valid new road
-var mouseOverRadius = 10;//Mouse Over Radius of building tooltips
+var mouseOverRadius = 15;//Mouse Over Radius of building tooltips
 var buildingChance = 1;//Chance that there is a building on any given segments
 var houseChance = 0.25;//Additional chance that a building will be a house. Setting to 0 means houses are as likely as any other building type
 
@@ -36,78 +35,144 @@ var buildingTypes = [
     'Schoolhouse',
     'House',
 ];
-$( document ).ready(function() {//Dont begin until html document is loaded
-    var c = document.getElementById("map");
-    var map = c.getContext("2d");
-    map.clearRect(0,0,mapSize,mapSize);
 
-    allSegments = [];//Clear arrays of objects
-    allRoads = [];
-    allBuildings = [];
+function genMap() {
+    $(document).ready(function () {//Dont begin until html document is loaded
+        var c = document.getElementById("map");
+        var map = c.getContext("2d");
+        map.beginPath();
+        map.fillStyle = "#F9E4B7";
+        map.fillRect(0, 0, mapSize, mapSize);
+        map.closePath();
 
 
-    for(var i = 0; i < roadNum; i++) {//Generates all the roads
-        var road = new Road();
-        allRoads.push(road);
-    }
+        segmentDensity = $("#segmentDensity").val();
+        roadNum = $("#roadNum").val();
+        minAngle = $("#minAngle").val();
+        console.log(segmentDensity);
 
-    for(var i = 0; i < allSegments.length; i++){//Generates Buildings for each spot for them
-       if(Math.random() <= buildingChance ) {
-           allSegments[i].content = new Building();
-           allBuildings.push(allSegments[i]);
-       }
-    }
+        allSegments = new Array();//Clear arrays of objects
+        allRoads = new Array();
+        allBuildings = new Array();
 
-    function reOffset(){
-        var BB=c.getBoundingClientRect();
-        offsetX=BB.left;
-        offsetY=BB.top;
-    }
-    var offsetX,offsetY;
-    reOffset();
-    window.onscroll=function(e){ reOffset(); }
-    window.onresize=function(e){ reOffset(); }
 
-    draw();
-
-    $("#map").mousemove(function(e){handleMouseMove(e);});
-
-    function draw(){
-        map.fillStyle = "#000000";
-        for(var i = 0; i < roadNum; i++) {
-            allRoads[i].draw(map);
-        }
-        map.stroke();
-    }
-    function handleMouseMove(e){
-        // tell the browser we're handling this event
-        e.preventDefault();
-        e.stopPropagation();
-
-        mouseX=parseInt(e.clientX-offsetX);
-        mouseY=parseInt(e.clientY-offsetY);
-
-        map.clearRect(0,0,mapSize,mapSize);
-        draw();
-        for(var i=0;i<allSegments.length;i++){
-            var h=allSegments[i];
-            var dx=mouseX-h.center.x;
-            var dy=mouseY-h.center.y;
-            if(dx*dx+dy*dy<mouseOverRadius*mouseOverRadius){
-                map.font = "12px Arial";
-                map.fillStyle = "#FF0000";
-                map.fillRect(h.center.x - 7, h.center.y - 7, 66, 24);
-                map.fillStyle = "#FFFFFF";
-                map.fillRect(h.center.x - 4, h.center.y - 4, 60, 18);
-                map.fillStyle = "#000000";
-                map.fillText(h.content.label,h.center.x+11,h.center.y+11);
+        for (var i = 0; i < roadNum; i++) {//Generates all the roads
+            var road = new Road();
+            if (road === false) {
+                roadNum = allRoads.length - 1;
                 break;
+            }
+            else {
+                allRoads.push(road);
             }
         }
 
-    }
-});
+        for (var i = 0; i < allSegments.length; i++) {//Generates Buildings for each spot for them
+            if (Math.random() <= buildingChance) {
+                allSegments[i].content = new Building();
+                allBuildings.push(allSegments[i]);
+            }
+        }
 
+        function reOffset() {
+            var BB = c.getBoundingClientRect();
+            offsetX = BB.left;
+            offsetY = BB.top;
+        }
+
+        var offsetX, offsetY;
+        reOffset();
+        window.onscroll = function (e) {
+            reOffset();
+        }
+        window.onresize = function (e) {
+            reOffset();
+        }
+
+        draw();
+
+        $("#map").mousemove(function (e) {
+            handleMouseMove(e);
+        });
+
+        $("#map").click(function (e) {
+            handleClick(e);
+        });
+
+        function draw() {
+            map.beginPath();
+            map.fillStyle = "#000000";
+            for (var i = 0; i < roadNum; i++) {
+                allRoads[i].draw(map);
+            }
+            map.stroke();
+            for (var i = 0; i < allSegments.length; i++) {
+                var h = allSegments[i];
+                if (h.isClicked) {
+                    map.font = "12px Arial";
+                    map.fillStyle = "#654321";
+                    map.fillRect(h.center.x - 7, h.center.y - 7, 106, 46);
+                    map.fillStyle = "#FFFFFF";
+                    map.fillRect(h.center.x - 4, h.center.y - 4, 100, 40);
+                    map.fillStyle = "#000000";
+                    map.fillText(h.content.label, h.center.x + 11, h.center.y + 11);
+                    map.closePath();
+                }
+            }
+            map.closePath();
+        }
+
+        function handleMouseMove(e) {
+            // tell the browser we're handling this event
+            e.preventDefault();
+            e.stopPropagation();
+
+            mouseX = parseInt(e.clientX - offsetX);
+            mouseY = parseInt(e.clientY - offsetY);
+
+            map.fillStyle = "#F9E4B7";
+            map.fillRect(0, 0, mapSize, mapSize);
+            draw();
+            for (var i = 0; i < allSegments.length; i++) {
+                var h = allSegments[i];
+                var dx = mouseX - h.center.x;
+                var dy = mouseY - h.center.y;
+                if ((dx * dx + dy * dy < mouseOverRadius * mouseOverRadius)) {
+                    map.font = "12px Arial";
+                    map.fillStyle = "#654321";
+                    map.fillRect(h.center.x - 7, h.center.y - 7, 106, 24);
+                    map.fillStyle = "#FFFFFF";
+                    map.fillRect(h.center.x - 4, h.center.y - 4, 100, 18);
+                    map.fillStyle = "#000000";
+                    map.fillText(h.content.label, h.center.x + 11, h.center.y + 11);
+                    map.closePath();
+                    break;
+                }
+            }
+
+        }
+
+        function handleClick(e) {
+            // tell the browser we're handling this event
+            e.preventDefault();
+            e.stopPropagation();
+
+            mouseX = parseInt(e.clientX - offsetX);
+            mouseY = parseInt(e.clientY - offsetY);
+            draw();
+            for (var i = 0; i < allSegments.length; i++) {
+                var h = allSegments[i];
+                var dx = mouseX - h.center.x;
+                var dy = mouseY - h.center.y;
+                if (dx * dx + dy * dy < mouseOverRadius * mouseOverRadius) {
+                    h.isClicked = !h.isClicked;
+                    break;
+                }
+            }
+        }
+
+    });
+}
 
 class Road {
     constructor(){//TODO implement this as a factory
@@ -127,8 +192,13 @@ class Road {
         //Generates road from an intersection with existing road
         else {
             do {//All of this is redone until enough of the road isn't overtop existing road
+                console.log('outer');
 
-                do {//Find a road segment that does not already have an intersection
+                var tries = 0;
+                do {//Find a road segment that does not already have an intersection TODO: Fix infinite loop
+                    console.log(tries);
+                    if(tries++ > 150)
+                        return false;
                     var seg = allSegments[Math.floor(Math.random() * allSegments.length)];
                 } while (!seg.left.isOpen && !seg.right.isOpen)
 
@@ -212,20 +282,23 @@ class Road {
 
             for (var j = 0; j < oldSegLen; j++) {
                 var oldSeg = allSegments[j];
+                var noOverlapped = true;
 
                 //Consider points an intersection if they are too close together
                 if (Point.distance(newSeg.center, oldSeg.center) < 5) {//TODO change 5 to some var/expression of vars
-                    overlap++;
+                    overlap++
+                    noOverlapped = false;;
                     oldSeg.blockSides();//Block both segments from being used in a new intersection
                     newSeg.blockSides();
-                }
-                else{//This is fucked
-                    nonOverlap++;
+                    break;
                 }
 
             }
+            if(noOverlapped){
+                nonOverlap++;
+            }
         }
-        //Also somewhat fucked by extension
+
         if(overlap/nonOverlap > overlapMax){
            return false;
         }else {
@@ -246,6 +319,7 @@ class Road {
         }
     }
     draw(map){
+        console.log(this);
         map.moveTo(this.start.x, this.start.y);
         map.lineTo(this.end.x, this.end.y);
         var len = this.segments.length;
@@ -276,6 +350,7 @@ class Segment {
         this.number = num;
         this.left = new Spot();
         this.right = new Spot();
+        this.isClicked = false;
     }
 
     blockSides(){
