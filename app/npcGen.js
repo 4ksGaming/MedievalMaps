@@ -1,6 +1,6 @@
 /*Kevin Ngo
  *NPC Generation for Medieval Maps
- *Version 0.2018.12.12.2
+ *Version 0.2018.12.12.3
  */
 
 var npcs = [];	//holds array of NPCs, to be returned to user as a text document
@@ -67,7 +67,6 @@ var buildingList = [{building: 'Apothecary', jobs: apothecaryJobs},{building: 'B
 var age = ["Teen", "Adult", "Elder"];	//ages available for "adults"
 
 var relationName = ['Friends with ', 'Parent of ', "Sibling of ", "Cousin of ", "Significant other of "];	//list of possible relationships
-var relationChild = ["Friends with ", "Child of ", "Sibling of ", "Cousin of "];
 
 class NPC{	//class for adult NPC generation
 	constructor(id, job, age, dem, race, gender, name, rel){
@@ -99,8 +98,7 @@ class childNPC{	//class for child NPC generation
 
 function npcGen(building, first = 0) {
   let id = npcs.length;	//id
-  
-  //building generation
+  //occupation generation
   let child = 0;
   let randInt = 0;	//setup variable to hold randomly generated number
   let job = 'tempJob';	//temporary job name
@@ -173,24 +171,34 @@ function npcGen(building, first = 0) {
     }
   }
   //relationship gen
-  let relationship = "None";
+  let relation = "None";
   let relName = "None";
   if(noRel.length != 0){	//check if there would be anyone to pair with
   	randInt = Math.floor(Math.random() * relationChance);
-  	if(randInt == 0){	//generate relationship
-  		randInt = Math.floor(Math.random() * relationName.length);
-    	
+  	if(randInt == 0){
+      randInt = Math.floor(Math.random() * relationName.length);
+      if (child == 1){	//so children won't generate a "significant other"
+      	randInt = Math.floor(Math.random() * relationName.length - 1);
+      }
+    	relation = relationName[randInt];
+      randInt = Math.floor(Math.random() * noRel.length);
+      let relID = noRel[randInt];
+      noRel.splice(randInt, 1);	//remove NPC from noRel list
+      for (let i = 0; i < npcs.length; i++){
+      	if(relID == npcs[i].id){
+        	npcs[i].relationship = relation + name;	//put together relation and name for existing NPC
+          relation = relation + npcs[i].name;	//put together relation and name for new NPC
+          break;	//stop searching
+        }
+      }      
 	  }
   	else{	//add id to no relationship pool
   		noRel.push(id);
   	}
   }
-  else{
+  else{	//no one in the list, push current npc in
   	noRel.push(id);
   }
-  
-  
-  
-  let newNPC = new NPC(id, job, ageNPC, demeanor, raceNPC, gender, name);
+  let newNPC = new NPC(id, job, ageNPC, demeanor, raceNPC, gender, name, relation);
   npcs.push(newNPC);
 }
