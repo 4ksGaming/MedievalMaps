@@ -2,6 +2,7 @@
 
 <template name="Add_Stuff_Page">
   <script src="/roadGen.js"></script>
+  <script src="/npcGen.js"></script>
   <img class="img.bg" src="/images/Webpage2.png" width="100%"/>
   <!--<body id="home">-->
   <div id="wrapper2">
@@ -61,11 +62,11 @@
         <label>More abandoned</label>
       </div>
 
-      <label>Proportion of extravegant buildings</label>
+      <label>Proportion of extravagant buildings</label>
       <div>
-        <label>More extravegant</label>
-        <input type='range' id='extravegantChance' min='0' max='1' value='.5' class='slider' name='extravegantChance'>
-        <label>Less extravegant</label>
+        <label>More extravagant</label>
+        <input type='range' id='extravagantChance' min='0' max='1' value='.5' class='slider' name='extravagantChance'>
+        <label>Less extravagant</label>
       </div>
 
       <label>Proportion of common buildings</label>
@@ -75,11 +76,11 @@
         <label>Less common</label>
       </div>
 
-      <label>Proportion of dilapadated buildings</label>
+      <label>Proportion of dilapidated buildings</label>
       <div>
-        <label>More dilapadated</label>
-        <input type='range' id='dilapadatedChance' min='0' max='1' value='0.5' class='slider' name='dilapadatedChance'>
-        <label>Less dilapadated</label>
+        <label>More dilapidated</label>
+        <input type='range' id='dilapidatedChance' min='0' max='1' value='0.5' class='slider' name='dilapidatedChance'>
+        <label>Less dilapidated</label>
       </div>
 
       <label>Proportion of humans</label>
@@ -130,6 +131,7 @@
     </script>
   </div>
   </div>
+  <p id="npcData"><p>
 
 
 
