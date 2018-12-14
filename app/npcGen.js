@@ -1,6 +1,6 @@
 /*  Kevin Ngo
  *  NPC Generation for Medieval Maps
- *  Version 0.2018.12.13.6
+ *  Version 0.2018.12.13.7
  */
 
 const npcs = [];//  holds array of NPCs, to be returned to user as a text document
@@ -5848,6 +5848,13 @@ const age = ['Teen', 'Adult', 'Elder'];//  ages available for adults
 // list of possible relationships
 const relationName = ['Friends with ', 'Parent of ', 'Sibling of ', 'Cousin of ', 'Significant other of '];
 
+const strName = 'Name: ';
+const strJob = ' Job: ';
+const strRace = ' Race: ';
+const strAge = ' Age: ';
+const strDem = ' Demeanor: ';
+const strRel = ' Relationship: ';
+
 class NPC {// class for adult NPC generation
   constructor(id, job, ageNPC, dem, raceNPC, gender, name, rel) {
     this.id = id;// id and index number in npcs[]
@@ -5858,34 +5865,28 @@ class NPC {// class for adult NPC generation
     this.gender = gender;// male or female
     this.name = name;// generated from name list for races
     this.relationship = rel;// percent chance generated from list relationships and list of NPCs w/o relationships
+    this.toString = strName + name + strJob + job + strRace + raceNPC + strAge + ageNPC + strDem + dem + strRel + rel;
+    // name job race age demeanor relation
   }
 }
-
-//  chance configuration
-// const relationInput = 0.05;// 5% chance that a new NPC will generate a relationship with an NPC
-// const relationChance = (1 / relationInput);// (1/x)chance that a new NPC has a relationship with existing NPCs
-// const humanChance = 4;
-// const elfChance = 4;
-// const dwarfChance = 4;
-// const orcChance = 4;
-/*  Race generation will sum all the weights and generate a number off the total.
-Each race is a range, and a race is chosen if generated number is within that range.
-Example:
-Weights for human = 10, elf = 4, dwarf = 3, orc = 1
-Sum is 18
-Range for human is [0,9], elf is [10,13], dwarf is [14,16], orc is [17,17]
-9 is generated, so race is human
-*/
 
 function npcGen(buildingObj, first) {
   const building = buildingObj.type;
   // fetch chances
   const relationInput = $('#relationChance').val();
-  const relationChance = (1 / relationInput);
+  const relationChance = (1 / relationInput);// (1/x)chance that a new NPC has a relationship with existing NPCs
   const humanChance = $('#humanChance').val();
   const elfChance = $('#elfChance').val();
   const dwarfChance = $('#dwarfChance').val();
   const orcChance = $('#orcChance').val();
+  /* Race generation will sum all the weights and generate a number off the total.
+  Each race is a range, and a race is chosen if generated number is within that range.
+  Example:
+  Weights for human = 10, elf = 4, dwarf = 3, orc = 1
+  Sum is 18
+  Range for human is [0,9], elf is [10,13], dwarf is [14,16], orc is [17,17]
+  9 is generated, so race is human
+  */
   // error check given building name
   let buildingCheck = 0;
   for (let i = 0; i < buildingList.length; i++) {
