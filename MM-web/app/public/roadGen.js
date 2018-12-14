@@ -143,7 +143,7 @@ function genMap() {
                     map.fillStyle = "#FFFFFF";
                     map.fillRect(h.center.x - 4, h.center.y - 4, 100, 40);
                     map.fillStyle = "#000000";
-                    map.fillText(h.content.label, h.center.x + 11, h.center.y + 11);
+                    map.fillText(h.content.label +' (' + i +')', h.center.x + 11, h.center.y + 11);
                     map.closePath();
                 }
             }
@@ -201,6 +201,16 @@ function genMap() {
 
     });
 }
+
+function dataToText(){
+    let allData = "";
+    for (let i = 0 ; i <allBuildings.length; i++){
+        allData += allBuildings[i].toString();
+    }
+    console.log(allData);
+    $("#npcData").html(allData);
+}
+
 
 class Road {
     constructor(){//TODO implement this as a factory
@@ -422,5 +432,11 @@ class Building {
             }
         }
 
+    }
+    toString(){
+        let str = (this.abandonded ? "Abandoned " : "") + this.quality + " " + this.type +"\n";
+        for (let i = 0; i < this.npcs.length; i++){
+            str += "\t" + this.npcs[i].toString();
+        }
     }
 }

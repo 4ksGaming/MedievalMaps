@@ -115,7 +115,7 @@ function genMap() {
                     map.fillStyle = "#FFFFFF";
                     map.fillRect(h.center.x - 4, h.center.y - 4, 100, 40);
                     map.fillStyle = "#000000";
-                    map.fillText(h.content.label, h.center.x + 11, h.center.y + 11);
+                    map.fillText(h.content.label +' (' + i +')', h.center.x + 11, h.center.y + 11);
                     map.closePath();
                 }
             }
@@ -144,7 +144,7 @@ function genMap() {
                     map.fillStyle = "#FFFFFF";
                     map.fillRect(h.center.x - 4, h.center.y - 4, 100, 18);
                     map.fillStyle = "#000000";
-                    map.fillText(h.content.label, h.center.x + 11, h.center.y + 11);
+                    map.fillText(h.content.label +' (' + i +')', h.center.x + 11, h.center.y + 11);
                     map.closePath();
                     break;
                 }
