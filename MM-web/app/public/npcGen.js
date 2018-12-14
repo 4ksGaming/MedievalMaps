@@ -5867,8 +5867,8 @@ const buildingList = [{ building: 'Apothecary', jobs: apothecaryJobs },
   { building: 'School', jobs: schoolJobs },
   { building: 'Stables', jobs: stablesJobs },
   { building: 'Tavern', jobs: tavernJobs },
-  { building: 'House', jobs: ['Butcher', 'Farmer', 'Adventurer', 'Hunter']},//TODO fix this
-  { building: 'Family House', jobs: ['Butcher', 'Farmer', 'Adventurer', 'Hunter']},//TODO fix this
+  { building: 'House', jobs: ['Farmer']},//TODO fix this
+  { building: 'Family House', jobs: ['Farmer']},//TODO fix this
   { building: 'Government Building', jobs: governmentJobs }];
 
 const age = ['Teen', 'Adult', 'Elder'];//  ages available for adults
@@ -5941,8 +5941,14 @@ function npcGen(buildingObj, first) {
         job = buildingList[i].jobs[0];
         break;
       } else {
-        randInt = Math.floor(Math.random() * buildingList[i].jobs.length);
-        job = buildingList[i].jobs[randInt];
+        if(Math.floor(Math.random() * 2) > 1) {
+          randInt = Math.floor(Math.random() * buildingList[i].jobs.length);
+          job = buildingList[i].jobs[randInt];
+        }
+        else{
+          randInt = Math.floor(Math.random() * allJobs.length);
+          job = allJobs[randInt];
+        }
         if (job === 'Youth') {
           child = 1;// set child flag as true
         }
