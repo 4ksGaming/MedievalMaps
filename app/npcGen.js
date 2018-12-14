@@ -1,28 +1,12 @@
 /*  Kevin Ngo
  *  NPC Generation for Medieval Maps
- *  Version 0.2018.12.13.5
+ *  Version 0.2018.12.13.6
  */
 
 const npcs = [];//  holds array of NPCs, to be returned to user as a text document
 
 // var listAdult = [];// holds array of adult NPCs for parent-child relationship
 const noRel = [];// holds indexes on NPCs without relationships
-
-//  chance configuration
-const relationInput = 0.05;// 5% chance that a new NPC will generate a relationship with an NPC
-const relationChance = (1 / relationInput);// (1/x)chance that a new NPC has a relationship with existing NPCs
-const humanChance = 4;
-const elfChance = 4;
-const dwarfChance = 4;
-const orcChance = 4;
-/*  Race generation will sum all the weights and generate a number off the total.
-Each race is a range, and a race is chosen if generated number is within that range.
-Example:
-Weights for human = 10, elf = 4, dwarf = 3, orc = 1
-Sum is 18
-Range for human is [0,9], elf is [10,13], dwarf is [14,16], orc is [17,17]
-9 is generated, so race is human
-*/
 
 //  list of demeanors
 /*  Neutral Traits (292 = 18%)  */
@@ -5877,7 +5861,31 @@ class NPC {// class for adult NPC generation
   }
 }
 
-function npcGen(building, first) {
+//  chance configuration
+// const relationInput = 0.05;// 5% chance that a new NPC will generate a relationship with an NPC
+// const relationChance = (1 / relationInput);// (1/x)chance that a new NPC has a relationship with existing NPCs
+// const humanChance = 4;
+// const elfChance = 4;
+// const dwarfChance = 4;
+// const orcChance = 4;
+/*  Race generation will sum all the weights and generate a number off the total.
+Each race is a range, and a race is chosen if generated number is within that range.
+Example:
+Weights for human = 10, elf = 4, dwarf = 3, orc = 1
+Sum is 18
+Range for human is [0,9], elf is [10,13], dwarf is [14,16], orc is [17,17]
+9 is generated, so race is human
+*/
+
+function npcGen(buildingObj, first) {
+  const building = buildingObj.type;
+  // fetch chances
+  const relationInput = $('#relationChance').val();
+  const relationChance = (1 / relationInput);
+  const humanChance = $('#humanChance').val();
+  const elfChance = $('#elfChance').val();
+  const dwarfChance = $('#dwarfChance').val();
+  const orcChance = $('#orcChance').val();
   // error check given building name
   let buildingCheck = 0;
   for (let i = 0; i < buildingList.length; i++) {
@@ -5986,9 +5994,11 @@ function npcGen(building, first) {
   }
   const newNPC = new NPC(id, job, ageNPC, demeanor, raceNPC, gender, name, relation);
   npcs.push(newNPC);
+  buildingObj.npcs.push(newNPC);
   // return id;// return ID of generated NPC
 }
 
+/*
 // test generation
 npcGen('Banker', 1);// test firstNPC functionality
 npcGen('Tavern');// test regular NPC generation
@@ -5997,4 +6007,4 @@ npcGen('Home');// test invalid building (building not in list)
 npcGen('Church');// test NPC generation after invalid building attempt
 for (let i = 0; i < npcs.length; i++) { // print out generated NPCs
   console.log(npcs[i]);
-}
+} */
