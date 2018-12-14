@@ -29,14 +29,14 @@ var buildingTypes = [
     'Brothel',
     'Family House',
     'Blacksmith',
-    'Town Hall',
+    'Government Building',
     'Bank',
     'Bakery',
     'Jewelry Store',
     'Stables',
     'Apothecary',
     'Orphanage',
-    'Schoolhouse',
+    'School',
     'House',
 ];
 const npcsPerBuild = [
@@ -45,17 +45,17 @@ const npcsPerBuild = [
     7,
     15,
     15,
+    7,
     3,
-    5,
     3,
     5,
     3,
     3,
     3,
     4,
-    2,
-    15,
     20,
+    15,
+    4,
 ];
 
 function genMap() {
@@ -74,9 +74,11 @@ function genMap() {
         buildingChance = $("#buildingChance").val();
         houseChance = $("#houseChance").val();
         abandonedChance = $("#abandonedChance").val();
-        extravagantChance = $("#extravagantChance").val();
-        commonChance = $("#commonChance").val();
-        dilapidatedChance = $("#dilapidatedChance").val();
+        extravagantChance = parseFloat($("#extravagantChance").val());
+        commonChance = parseFloat($("#commonChance").val());
+        dilapidatedChance = parseFloat($("#dilapidatedChance").val());
+
+        console.log('aban.: ' + abandonedChance);
 
         allSegments = new Array();//Clear arrays of objects
         allRoads = new Array();
@@ -97,9 +99,11 @@ function genMap() {
         for (var i = 0; i < allSegments.length; i++) {//Generates Buildings for each spot for them
             if (Math.random() <= buildingChance) {
                 allSegments[i].content = new Building();
-                allBuildings.push(allSegments[i]);
+                allBuildings.push(allSegments[i].content);
             }
         }
+
+        dataToText();
 
         function reOffset() {
             var BB = c.getBoundingClientRect();
@@ -139,11 +143,11 @@ function genMap() {
                 if (h.isClicked) {
                     map.font = "12px Arial";
                     map.fillStyle = "#654321";
-                    map.fillRect(h.center.x - 7, h.center.y - 7, 106, 46);
+                    map.fillRect(h.center.x - 7, h.center.y - 7, 156, 24);
                     map.fillStyle = "#FFFFFF";
-                    map.fillRect(h.center.x - 4, h.center.y - 4, 100, 40);
+                    map.fillRect(h.center.x - 4, h.center.y - 4, 150, 18);
                     map.fillStyle = "#000000";
-                    map.fillText(h.content.label +' (' + i +')', h.center.x + 11, h.center.y + 11);
+                    map.fillText(h.content.label + ' (' + i + ')', h.center.x + 11, h.center.y + 11);
                     map.closePath();
                 }
             }
@@ -168,11 +172,11 @@ function genMap() {
                 if ((dx * dx + dy * dy < mouseOverRadius * mouseOverRadius)) {
                     map.font = "12px Arial";
                     map.fillStyle = "#654321";
-                    map.fillRect(h.center.x - 7, h.center.y - 7, 106, 24);
+                    map.fillRect(h.center.x - 7, h.center.y - 7, 156, 24);
                     map.fillStyle = "#FFFFFF";
-                    map.fillRect(h.center.x - 4, h.center.y - 4, 100, 18);
+                    map.fillRect(h.center.x - 4, h.center.y - 4, 150, 18);
                     map.fillStyle = "#000000";
-                    map.fillText(h.content.label, h.center.x + 11, h.center.y + 11);
+                    map.fillText(h.content.label + ' (' + i + ')', h.center.x + 11, h.center.y + 11);
                     map.closePath();
                     break;
                 }
@@ -187,6 +191,8 @@ function genMap() {
 
             mouseX = parseInt(e.clientX - offsetX);
             mouseY = parseInt(e.clientY - offsetY);
+            map.fillStyle = "#F9E4B7";
+            map.fillRect(0, 0, mapSize, mapSize);
             draw();
             for (var i = 0; i < allSegments.length; i++) {
                 var h = allSegments[i];
@@ -205,9 +211,9 @@ function genMap() {
 function dataToText(){
     let allData = "";
     for (let i = 0 ; i <allBuildings.length; i++){
-        allData += allBuildings[i].toString();
+        allData += (i + ' ' + allBuildings[i].toString());
     }
-    console.log(allData);
+    //console.log(allData);
     $("#npcData").html(allData);
 }
 
@@ -229,12 +235,10 @@ class Road {
         }
         //Generates road from an intersection with existing road
         else {
-            do {//All of this is redone until enough of the road isn't overtop existing road
-                console.log('outer');
+            do {//All of this is redone until enough of the road isn't overtop existing roads
 
                 var tries = 0;
                 do {//Find a road segment that does not already have an intersection TODO: Fix infinite loop
-                    console.log(tries);
                     if(tries++ > 150)
                         return false;
                     var seg = allSegments[Math.floor(Math.random() * allSegments.length)];
@@ -356,7 +360,7 @@ class Road {
         }
     }
     draw(map){
-        console.log(this);
+
         map.moveTo(this.start.x, this.start.y);
         map.lineTo(this.end.x, this.end.y);
         var len = this.segments.length;
@@ -414,9 +418,9 @@ class Building {
         this.type = buildingTypes[j];
         this.label = this.type;
         this.npcs = [];
-        this.abandonded = (100 * Math.random()) < abandonedChance;
+        this.abandonded = Math.random() < abandonedChance;
         const qualityWeightSum = (extravagantChance + commonChance + dilapidatedChance);
-        let randInt = Math.floor(Math.random() * qualityWeightSum);// generate number within total weight
+        let randInt = (Math.random() * qualityWeightSum);// generate number within total weight
         if (randInt < extravagantChance) {
             this.quality = 'Extravagant';
         } else if (randInt < (extravagantChance + commonChance)) {
@@ -434,9 +438,12 @@ class Building {
 
     }
     toString(){
-        let str = (this.abandonded ? "Abandoned " : "") + this.quality + " " + this.type +"\n";
+        let str = (this.abandonded ? "Abandoned " : "") + this.quality + " " + this.type +"<br>";
+        //console.log(str);
         for (let i = 0; i < this.npcs.length; i++){
-            str += "\t" + this.npcs[i].toString();
+          //console.log(this.npcs[i].toString);
+            str += ("\t" + this.npcs[i].toString + "<br>");
         }
+        return str+"<br>";
     }
 }

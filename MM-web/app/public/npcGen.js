@@ -5812,6 +5812,32 @@ const race = [{
 }];
 
 //  list of jobs and buildings
+const allJobs = [
+  'Blacksmith',
+  'Guard',
+  'Scholar',
+  'Hunter',
+  'Butcher',
+  'Baker',
+  'Farmer',
+  'Clergy',
+  'Shopkeep',
+  'Tailor ',
+  'Prostitute',
+  'Barkeep',
+  'Adventurer',
+  'Unemployed',
+  'Sales Person',
+  'Librarian',
+  'Healer',
+  'Mayor',
+  'Stable Master',
+  'Carriage Driver',
+  'Banker',
+  'Jewler',
+  'Youth',
+  'Teacher',
+]
 const apothecaryJobs = ['Healer', 'Scholar', 'Adventurer'];
 const bakeryJobs = ['Baker', 'Farmer', 'Adventurer'];
 const bankJobs = ['Banker', 'Jewler', 'Guard'];
@@ -5829,18 +5855,20 @@ const tavernJobs = ['Barkeep', 'Adventurer', 'Hunter', 'Unemployed'];
 const governmentJobs = ['Town Official', 'Guard', 'Librarian'];
 const buildingList = [{ building: 'Apothecary', jobs: apothecaryJobs },
   { building: 'Bakery', jobs: bakeryJobs },
-  { building: 'Banker', jobs: bankJobs },
+  { building: 'Bank', jobs: bankJobs },
   { building: 'Barracks', jobs: barracksJobs },
   { building: 'Blacksmith', jobs: blacksmithJobs },
   { building: 'Brothel', jobs: brothelJobs },
-  { building: 'Butcher', jobs: butcherJobs },
+  { building: 'Butcher Shop', jobs: butcherJobs },
   { building: 'Church', jobs: churchJobs },
-  { building: 'Jeweler', jobs: jewelerJobs },
+  { building: 'Jewelry Store', jobs: jewelerJobs },
   { building: 'Library', jobs: libraryJobs },
   { building: 'Orphanage', jobs: orphanageJobs },
   { building: 'School', jobs: schoolJobs },
   { building: 'Stables', jobs: stablesJobs },
   { building: 'Tavern', jobs: tavernJobs },
+  { building: 'House', jobs: ['Farmer']},//TODO fix this
+  { building: 'Family House', jobs: ['Farmer']},//TODO fix this
   { building: 'Government Building', jobs: governmentJobs }];
 
 const age = ['Teen', 'Adult', 'Elder'];//  ages available for adults
@@ -5875,10 +5903,10 @@ function npcGen(buildingObj, first) {
   // fetch chances
   const relationInput = $('#relationChance').val();
   const relationChance = (1 / relationInput);// (1/x)chance that a new NPC has a relationship with existing NPCs
-  const humanChance = $('#humanChance').val();
-  const elfChance = $('#elfChance').val();
-  const dwarfChance = $('#dwarfChance').val();
-  const orcChance = $('#orcChance').val();
+  const humanChance = parseFloat($('#humanChance').val());
+  const elfChance = parseFloat($('#elfChance').val());
+  const dwarfChance = parseFloat($('#dwarfChance').val());
+  const orcChance = parseFloat($('#orcChance').val());
   /* Race generation will sum all the weights and generate a number off the total.
   Each race is a range, and a race is chosen if generated number is within that range.
   Example:
@@ -5913,8 +5941,14 @@ function npcGen(buildingObj, first) {
         job = buildingList[i].jobs[0];
         break;
       } else {
-        randInt = Math.floor(Math.random() * buildingList[i].jobs.length);
-        job = buildingList[i].jobs[randInt];
+        if(Math.floor(Math.random() * 2) > 1) {
+          randInt = Math.floor(Math.random() * buildingList[i].jobs.length);
+          job = buildingList[i].jobs[randInt];
+        }
+        else{
+          randInt = Math.floor(Math.random() * allJobs.length);
+          job = allJobs[randInt];
+        }
         if (job === 'Youth') {
           child = 1;// set child flag as true
         }
@@ -5934,7 +5968,7 @@ function npcGen(buildingObj, first) {
   // race gen
   let raceNPC = 'temp';
   const raceWeightSum = (humanChance + elfChance + dwarfChance + orcChance);
-  randInt = Math.floor(Math.random() * raceWeightSum);// generate number within total weight
+  randInt = (Math.random() * raceWeightSum);// generate number within total weight
   if (randInt < humanChance) { // is number between 0 and (humanChance)
     raceNPC = raceName[0];
   } else if (randInt < (humanChance + elfChance)) { // is number between (humanChance) & (elfChance)
