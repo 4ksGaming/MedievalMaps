@@ -13,6 +13,10 @@ var overlapMax = 1/3;//Proportion of segments of new roads that are not intersec
 var mouseOverRadius = 15;//Mouse Over Radius of building tooltips
 var buildingChance = 1;//Chance that there is a building on any given segments
 var houseChance = 0.25;//Additional chance that a building will be a house. Setting to 0 means houses are as likely as any other building type
+let extravagantChance = 50;
+let commonChance = 50;
+let dilapidatedChance = 50;
+let abandonedChance = 2;
 
 var allRoads = new Array();
 var allSegments = new Array();
@@ -35,6 +39,24 @@ var buildingTypes = [
     'Schoolhouse',
     'House',
 ];
+const npcsPerBuild = [
+    3,
+    10,
+    7,
+    15,
+    15,
+    3,
+    5,
+    3,
+    5,
+    3,
+    3,
+    3,
+    4,
+    2,
+    15,
+    20,
+];
 
 function genMap() {
     $(document).ready(function () {//Dont begin until html document is loaded
@@ -49,7 +71,12 @@ function genMap() {
         segmentDensity = $("#segmentDensity").val();
         roadNum = $("#roadNum").val();
         minAngle = $("#minAngle").val();
-        console.log(segmentDensity);
+        buildingChance = $("#buildingChance").val();
+        houseChance = $("#houseChance").val();
+        abandonedChance = $("#abandonedChance").val();
+        extravagantChance = $("#extravagantChance").val();
+        commonChance = $("#commonChance").val();
+        dilapidatedChance = $("#dilapidatedChance").val();
 
         allSegments = new Array();//Clear arrays of objects
         allRoads = new Array();
@@ -306,7 +333,6 @@ class Road {
             return true;
         }
 
-
     }
 
     pushSegmentsToAll(){
@@ -377,5 +403,24 @@ class Building {
         var j = Math.min(i, buildingTypes.length -1);
         this.type = buildingTypes[j];
         this.label = this.type;
+        this.npcs = [];
+        this.abandonded = (100 * Math.random()) < abandonedChance;
+        const qualityWeightSum = (extravagantChance + commonChance + dilapidatedChance);
+        let randInt = Math.floor(Math.random() * qualityWeightSum);// generate number within total weight
+        if (randInt < extravagantChance) {
+            this.quality = 'Extravagant';
+        } else if (randInt < (extravagantChance + commonChance)) {
+            this.quality = 'Common';
+        } else {
+            this.quality = 'Dilapidated';
+        }
+        const npcNum = Math.floor(Math.random() * (npcsPerBuild[j] - 1));
+        if(!this.abandonded) {
+            npcGen(this, true);
+            for(let j = 0; j < npcNum; j++){
+                npcGen(this, false);
+            }
+        }
+
     }
 }
