@@ -1,0 +1,138 @@
+
+
+<template name="Add_Stuff_Page">
+  <script src="/roadGen.js"></script>
+  <script src="/npcGen.js"></script>
+  <img class="img.bg" src="/images/Webpage2.png" width="100%"/>
+  <!--<body id="home">-->
+  <div id="wrapper2">
+    <div class="ui container">
+      <a class="{{ isActiveRoute 'Home_Page'}} item" href="{{pathFor 'Home_Page'}}">
+        <img class="img" src="/images/MMLogo.png"  id="homebut"/>
+      </a>
+    </div>
+  </div>
+
+  <div id="mapTool">
+  <div style="float: left !important;">
+    <canvas id="map" width="600" height="600" style="border:#654321 4px solid"></canvas>
+  </div>
+  <div class="slidecontainer" style="float: left">
+    <input id="clickMe" type="button" value="Refresh Map" onclick="genMap();" />
+    <div style="text-align: center">
+      <label>Number of roads</label>
+      <div>
+        <label>Less roads</label>
+        <input type='range' id='roadNum' min='1' max='150' value='20' class='slider' name='roadNum'>
+        <label>More roads</label>
+      </div>
+
+      <label>City Density</label>
+      <div>
+        <label>More dense</label>
+        <input type='range' id='segmentDensity' min='10' max='75' value='40' class='slider' name='segmentDensity'>
+        <label>Less dense</label>
+      </div>
+
+      <label>Minimum angle of intersection</label>
+      <div>
+        <label>Lower angles</label>
+        <input type='range' id='minAngle' min='1' max='90' value='90' class='slider' name='minAngle'>
+        <label>Higher angles</label>
+      </div>
+
+      <label>Chance of building</label>
+      <div>
+        <label>Less buildings</label>
+        <input type='range' id='buildingChance' min='0' max='1' value='1' class='slider' name='buildingChance'>
+        <label>More buildings</label>
+      </div>
+
+      <label>Additional house weighting</label>
+      <div>
+        <label>Less houses</label>
+        <input type='range' id='houseChance' min='0' max='1' value='0.5' class='slider' name='houseChance'>
+        <label>More houses</label>
+      </div>
+
+      <label>Chance of abandoned building</label>
+      <div>
+        <label>Less abandoned</label>
+        <input type='range' id='abandonedChance' min='0' max='1' value='0.02' class='slider' name='abandonedChance'>
+        <label>More abandoned</label>
+      </div>
+
+      <label>Proportion of extravagant buildings</label>
+      <div>
+        <label>More extravagant</label>
+        <input type='range' id='extravagantChance' min='0' max='1' value='.5' class='slider' name='extravagantChance'>
+        <label>Less extravagant</label>
+      </div>
+
+      <label>Proportion of common buildings</label>
+      <div>
+        <label>More common</label>
+        <input type='range' id='commonChance' min='0' max='1' value='0.5' class='slider' name='commonChance'>
+        <label>Less common</label>
+      </div>
+
+      <label>Proportion of dilapidated buildings</label>
+      <div>
+        <label>More dilapidated</label>
+        <input type='range' id='dilapidatedChance' min='0' max='1' value='0.5' class='slider' name='dilapidatedChance'>
+        <label>Less dilapidated</label>
+      </div>
+
+      <label>Proportion of humans</label>
+      <div>
+        <label>More humans</label>
+        <input type='range' id='humanChance' min='0' max='1' value='0.5' class='slider' name='humanChance'>
+        <label>Less humans</label>
+      </div>
+
+      <label>Proportion of elves</label>
+      <div>
+        <label>More elves</label>
+        <input type='range' id='elfChance' min='0' max='1' value='0.5' class='slider' name='elfChance'>
+        <label>Less elves</label>
+      </div>
+
+      <label>Proportion of dwarves</label>
+      <div>
+        <label>More dwarves</label>
+        <input type='range' id='dwarfChance' min='0' max='1' value='.5' class='slider' name='dwarfChance'>
+        <label>Less dwarves</label>
+      </div>
+
+      <label>Proportion of orcs</label>
+      <div>
+        <label>More orcs</label>
+        <input type='range' id='orcChance' min='0' max='1' value='0.5' class='slider' name='orcChance'>
+        <label>Less orcs</label>
+      </div>
+
+      <label>Chance of relationship</label>
+      <div>
+        <label>Less relationships</label>
+        <input type='range' id='relationChance' min='0.01' max='1' value='0.05' class='slider' name='relationChance'>
+        <label>More relationships</label>
+      </div>
+
+
+
+    </div>
+    <a href="#" class="button" id="btn-download" download="my-file-name.png">Download</a>
+    <script>
+      var button = document.getElementById('btn-download');
+      button.addEventListener('click', function (e) {
+        var dataURL = map.toDataURL('image/png');
+        button.href = dataURL;
+      });
+    </script>
+  </div>
+  </div>
+  <p id="npcData"><p>
+
+
+
+</template>
