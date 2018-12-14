@@ -13,6 +13,12 @@
   padding-left: 20%;
   position: absolute;
 }
+#dataBox {
+  clear: left;
+  overflow: auto;
+  height: 1500px;
+  width: auto;
+}
 footer{
   /*width: 100%;*/
  /* background-image: url('/images/footer.png');
